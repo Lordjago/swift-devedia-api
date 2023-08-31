@@ -33,8 +33,14 @@ const UserSchema = mongoose.Schema({
         type: Array,
         default: []
     },
-    location : String,
-    occupation: String,
+    location : {
+        type: String,
+        default: "Los Angeles"
+    },
+    occupation: {
+        type: String,
+        default: "Footballer"
+    },
     viewedProfile: Number,
     impressions: Number
 }, {timestanps: true})

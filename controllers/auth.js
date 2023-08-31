@@ -33,7 +33,7 @@ export const register = asyncHandler(async (req, res, next) => {
         impressions: Math.floor(Math.random() * 10000)
     })
     const savedUser = await newUser.save()
-    return res.status(200).json(savedUser)
+    return res.status(201).json(savedUser)
 })
 
 

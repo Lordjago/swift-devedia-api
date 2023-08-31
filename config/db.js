@@ -7,9 +7,11 @@ export default async () => {
         db.on('connected', () => {
             console.log(`DB connected successfully on ${db.host}`.green.underline);
         });
+
         db.on('disconnected', () => {
             console.log(`DB disconnected successfully on ${db.host}`.red.underline);
         });
+        
         db.on('error', (err) => {
             console.log(`Error Occured ${err}`.red.underline)
         })

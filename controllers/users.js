@@ -14,22 +14,22 @@ export const getUsersFriends = asyncHandler(async (req, res, next) => {
     const user = await User.findById(id)
 
     // if (user.friends.length > 0) {
-        const friends = await Promise.all(
-            user.friends.map(id => {
-                return User.findById(id)
-            })
-        )
-        const formattedFriends = friends.map(({ _id, firstName, lastName, occupation, location, picturePath }) => {
-            return {
-                _id,
-                firstName,
-                lastName,
-                occupation,
-                location,
-                picturePath
-            }
+    const friends = await Promise.all(
+        user.friends.map(id => {
+            return User.findById(id)
         })
-        return res.status(200).json({ friends: formattedFriends })
+    )
+    const formattedFriends = friends.map(({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return {
+            _id,
+            firstName,
+            lastName,
+            occupation,
+            location,
+            picturePath
+        }
+    })
+    return res.status(200).json({ friends: formattedFriends })
     // } else {
     //     return res.status(200).json(user.friends)
     // }
@@ -42,26 +42,28 @@ export const addRemoveFriend = asyncHandler(async (req, res, next) => {
 
     const user = await User.findById(id)
     const friend = await User.findById(friendId)
-    // console.log(user, friend)
+    console.log(user.friends)
     if (user.friends.includes(friendId)) {
         console.log("if")
-        user.friends.filter(id => id != friendId)
+        user.friends = user.friends.filter(id => id != friendId)
         friend.friends = friend.friends.filter(id => id != id)
+        
     } else {
         console.log("else")
         user.friends.push(friendId)
         friend.friends.push(id)
-    }
 
+    }
     await user.save()
     await friend.save()
-    
+
+
     const friends = await Promise.all(
         user.friends.map(id => {
-           return User.findById(id)
+            return User.findById(id)
         })
     )
-    
+
     const formattedFriends = friends.map(({ _id, firstName, lastName, occupation, location, picturePath }) => {
         return {
             _id,
