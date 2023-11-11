@@ -55,8 +55,7 @@ export const login = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse("Invalid Credentials", 400))
     }
     //delete user password from retrieved data
-    const { password : pass, ...userData } = user._doc
 
     const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY)
-    return res.status(200).json({ token: token, user: userData })
+    return res.status(200).json({ token: token, user: user })
 })

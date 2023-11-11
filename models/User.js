@@ -27,13 +27,14 @@ const UserSchema = mongoose.Schema({
     },
     picturePath: {
         type: String,
-        default: ""
+        default:
+            "https://static.thenounproject.com/png/4038155-200.png"
     },
     friends: {
         type: Array,
         default: []
     },
-    location : {
+    location: {
         type: String,
         default: "Los Angeles"
     },
@@ -43,7 +44,18 @@ const UserSchema = mongoose.Schema({
     },
     viewedProfile: Number,
     impressions: Number
-}, {timestanps: true})
+}, {
+    toJSON: {
+        transform: function (doc, ret) {
+            delete ret.password;
+            delete ret.__v
+        }
+    }
+},
+    {
+        timestamps: true,
+    }
+)
 
 const User = mongoose.model('User', UserSchema)
 

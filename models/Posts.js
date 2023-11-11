@@ -22,11 +22,21 @@ const postSchema = mongoose.Schema({
         type: Map,
         of: Boolean
     },
-    comments : {
+    comments: {
         type: Array,
         default: []
     }
-}, {timestamps: true})
+}, {
+    toJSON: {
+        transform: function (doc, ret) {
+            delete ret.password;
+            delete ret.__v
+        }
+    }
+},
+    {
+        timestamps: true,
+    })
 
 const Post = mongoose.model('Posts', postSchema)
 
