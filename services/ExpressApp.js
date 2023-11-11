@@ -15,64 +15,64 @@ import userRoutes from '../routes/users.js'
 import postRoutes from '../routes/posts.js'
 import User from '../models/User.js';
 import Post from '../models/Posts.js';
-import {users, posts } from '../data/index.js'
+import { users, posts } from '../data/index.js'
 
 /* CONFIGRATIONS */
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename);
-dotenv.config({path: "./config/.env"})
+dotenv.config({ path: "./config/.env" })
 
-export default async (app)=> {
+export default async (app) => {
 
-app.use(express.json());
-app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}))
-app.use(morgan("common"))
-app.use(bodyParser.json({limit: "30mb", extended: true}));
-app.use(bodyParser.urlencoded({limit: "30mb", extended: true}))
-app.use(cors());
-app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+    app.use(express.json());
+    app.use(helmet());
+    app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }))
+    app.use(morgan("common"))
+    app.use(bodyParser.json({ limit: "30mb", extended: true }));
+    app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }))
+    app.use(cors());
+    app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
-/* FILE STORAGE */
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/assets')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname)
+    /* FILE STORAGE */
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'public/assets')
+        },
+        filename: (req, file, cb) => {
+            cb(null, file.originalname)
+        }
+    })
+
+    const fileFilter = (req, file, cb) => {
+        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+            cb(null, true)
+        } else {
+            cb(null, false)
+        }
     }
-})
 
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
-        cb(null, true)
-    } else {
-        cb(null, false)
-    }
-}
+    /* DB CONNECTION */
+    // dbConnection()
+    // .then(() => {
+    //     User.insertMany(users)
+    //     Post.insertMany(posts)
+    // })
+    /* Mount Multer */
+    app.use(multer({
+        storage: storage,
+        fileFilter: fileFilter
+    }).single('image'))
 
-/* DB CONNECTION */
-// dbConnection()
-// .then(() => {
-//     User.insertMany(users)
-//     Post.insertMany(posts)
-// })
-/* Mount Multer */
-app.use(multer({
-    storage: storage,
-    fileFilter: fileFilter
-}).single('image'))
+    /* Root route of express app */
+    app.get("/", (req, res, next) => {
+        res.send("You've gotten to the root route");
+    });
+    /* Mount routers */
 
-/* Root route of express app */
-app.get("/", (req, res, next) => {
-  res.send("You've gotten to the root route");
-});
-/* Mount routers */
+    app.use('/auth', authRoutes)
+    app.use('/users', userRoutes)
+    app.use('/posts', postRoutes)
 
-app.use('/auth', authRoutes)
-app.use('/users', userRoutes)
-app.use('/posts', postRoutes)
-
-return app
+    return app
 }
